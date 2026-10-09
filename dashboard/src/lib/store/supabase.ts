@@ -113,6 +113,12 @@ export function supabaseStore(db: SupabaseClient): Store {
       const r = must<WorkspaceRow | null>(await db.from("workspaces").select("*").eq("id", id).maybeSingle());
       return r ? toWorkspace(r) : undefined;
     },
+    async getWorkspaceByAgentId(agentId) {
+      const r = must<WorkspaceRow | null>(
+        await db.from("workspaces").select("*").eq("config->agent->>elevenlabsAgentId", agentId).maybeSingle(),
+      );
+      return r ? toWorkspace(r) : undefined;
+    },
     async createWorkspace(input) {
       const r = must<WorkspaceRow>(
         await db
@@ -125,7 +131,7 @@ export function supabaseStore(db: SupabaseClient): Store {
     },
     async updateWorkspace(id, patch) {
       const current = await store.getWorkspaceById(id);
-      if (!current) throw new Error("Workspace no existe");
+      if (!current) throw new Error("Workspace not found");
       const r = must<WorkspaceRow>(
         await db
           .from("workspaces")
@@ -169,7 +175,7 @@ export function supabaseStore(db: SupabaseClient): Store {
       const invite = await db.auth.admin.inviteUserByEmail(email, { redirectTo });
       if (invite.data.user) userId = invite.data.user.id;
       else userId = await findUserIdByEmail(db, email);
-      if (!userId) throw new Error(invite.error?.message ?? "No se pudo invitar");
+      if (!userId) throw new Error(invite.error?.message ?? "Could not send the invite");
       must(
         await db
           .from("workspace_members")

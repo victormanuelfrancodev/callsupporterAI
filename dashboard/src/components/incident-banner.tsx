@@ -18,13 +18,13 @@ export function IncidentBanner({ items, label }: { items: Incident[]; label: str
       <BarricadeIcon className="size-5 shrink-0" weight="duotone" />
       <p className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-center">
         <span className="font-semibold">
-          {label} · {live ? "en curso" : "programada"}
+          {label} · {live ? "in progress" : "scheduled"}
         </span>
         <span className="mx-2 hidden opacity-40 sm:inline">·</span>
         <span className="tabular-nums">{jstRange(first.start, first.end)}</span>
-        {items.length > 1 ? <span className="opacity-70 sm:ml-1">(+{items.length - 1} más)</span> : null}
+        {items.length > 1 ? <span className="opacity-70 sm:ml-1">(+{items.length - 1} more)</span> : null}
       </p>
-      <span className="hidden text-xs opacity-70 sm:inline">El agente avisa a los clientes que pregunten</span>
+      <span className="hidden text-xs opacity-70 sm:inline">The agent tells customers who ask</span>
     </div>
   );
 }

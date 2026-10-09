@@ -25,8 +25,8 @@ export default async function WorkspaceLayout({ children, params }: LayoutProps<
         demo={demoMode}
         signOut={signOut}
         badges={{
-          escalations: conversations.filter((c) => c.escalation && c.escalation.status !== "resuelta").length,
-          review: conversations.filter((c) => c.classification && c.classification.agentIssue.value !== "ninguno").length,
+          escalations: conversations.filter((c) => c.escalation && c.escalation.status !== "resolved").length,
+          review: conversations.filter((c) => c.classification && c.classification.agentIssue.value !== "none").length,
         }}
       />
       <main className="min-w-0 flex-1 px-4 pb-28 pt-6 sm:px-8 md:pb-10 lg:px-10">

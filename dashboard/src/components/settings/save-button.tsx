@@ -7,7 +7,7 @@ import { CheckIcon, FloppyDiskIcon, SpinnerGapIcon } from "@phosphor-icons/react
 import { btn } from "../ui";
 
 /** Submit button that shows a spinner while saving and a check once done. */
-export function SaveButton({ label = "Guardar cambios", className }: { label?: string; className?: string }) {
+export function SaveButton({ label = "Save changes", className }: { label?: string; className?: string }) {
   const { pending } = useFormStatus();
   const [saved, setSaved] = useState(false);
   const was = useRef(false);
@@ -29,7 +29,7 @@ export function SaveButton({ label = "Guardar cambios", className }: { label?: s
       ) : (
         <FloppyDiskIcon className="size-4" weight="duotone" />
       )}
-      {saved ? "Guardado" : label}
+      {saved ? "Saved" : label}
     </button>
   );
 }

@@ -107,16 +107,16 @@ function JudgmentRow({ label, meta, p }: { label: string; meta: Meta; p: number 
 function RecordCard({ c }: { c: Conversation }) {
   if (!c.record) {
     return (
-      <Card title="Pedido" icon={PackageIcon}>
-        <p className="text-sm text-zinc-500">El agente no consultó ningún pedido.</p>
+      <Card title="Order" icon={PackageIcon}>
+        <p className="text-sm text-zinc-500">The agent didn&apos;t look up an order.</p>
       </Card>
     );
   }
   const r = c.record;
   return (
-    <Card title="Pedido" icon={PackageIcon} action={<code className="font-mono text-xs text-zinc-500">{r.reference}</code>}>
+    <Card title="Order" icon={PackageIcon} action={<code className="font-mono text-xs text-zinc-500">{r.reference}</code>}>
       <div className="divide-y divide-zinc-100">
-        {r.status ? <Field icon={SparkleIcon} label="Estado"><Chip meta={{ label: r.status.label, tone: r.status.tone }} size="sm" /></Field> : null}
+        {r.status ? <Field icon={SparkleIcon} label="Status"><Chip meta={{ label: r.status.label, tone: r.status.tone }} size="sm" /></Field> : null}
         {r.fields.map((f) => (
           <Field key={f.label} icon={IdentificationCardIcon} label={f.label}>
             {f.value}
@@ -155,8 +155,8 @@ export default async function ConversationPage(props: PageProps<"/w/[slug]/c/[id
             ) : null}
             <span className="inline-flex items-center gap-1.5"><GlobeIcon className="size-4" />{c.customer.language}</span>
             <span className="inline-flex items-center gap-1.5">
-              {c.channel === "voz" ? <MicrophoneIcon className="size-4" /> : <ChatCircleIcon className="size-4" />}
-              {c.channel === "voz" ? "Voz" : "Chat"}
+              {c.channel === "voice" ? <MicrophoneIcon className="size-4" /> : <ChatCircleIcon className="size-4" />}
+              {c.channel === "voice" ? "Voice" : "Chat"}
             </span>
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap"><ClockIcon className="size-4" />{duration(c.durationSec)}</span>
           </div>
@@ -168,39 +168,39 @@ export default async function ConversationPage(props: PageProps<"/w/[slug]/c/[id
       </div>
 
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <Card title="Conversación" icon={ChatCircleIcon} action={<span className="text-xs text-zinc-400">{timeAgo(c.startedAt)}</span>}>
+        <Card title="Conversation" icon={ChatCircleIcon} action={<span className="text-xs text-zinc-400">{timeAgo(c.startedAt)}</span>}>
           {c.summary ? <p className="mb-5 rounded-xl bg-zinc-50 px-4 py-3 text-sm text-zinc-600">{c.summary}</p> : null}
           <div className="space-y-3">
-            {c.messages.length ? c.messages.map((m) => <Bubble key={m.id} m={m} />) : <p className="text-sm text-zinc-500">La transcripción llegará al terminar la llamada.</p>}
+            {c.messages.length ? c.messages.map((m) => <Bubble key={m.id} m={m} />) : <p className="text-sm text-zinc-500">The transcript arrives when the call ends.</p>}
           </div>
         </Card>
 
         <div className="space-y-6">
           {c.escalation ? (
             <Card
-              title="Escalación"
+              title="Escalation"
               icon={SirenIcon}
               action={<Chip meta={ESCALATION_STATUS[c.escalation.status]} size="sm" />}
               className="border-rose-200"
             >
               <p className="text-sm text-zinc-700">{c.escalation.reason}</p>
               <div className="mt-3 divide-y divide-zinc-100">
-                <Field icon={SirenIcon} label="Urgencia"><Chip meta={URGENCY[c.escalation.urgency]} size="sm" /></Field>
-                <Field icon={TimerIcon} label="Creada">{timeAgo(c.escalation.createdAt)}</Field>
-                <Field icon={UserIcon} label="Asignada">{c.escalation.assignee ?? "Sin asignar"}</Field>
+                <Field icon={SirenIcon} label="Urgency"><Chip meta={URGENCY[c.escalation.urgency]} size="sm" /></Field>
+                <Field icon={TimerIcon} label="Created">{timeAgo(c.escalation.createdAt)}</Field>
+                <Field icon={UserIcon} label="Assignee">{c.escalation.assignee ?? "Unassigned"}</Field>
               </div>
-              {c.escalation.status !== "resuelta" ? (
+              {c.escalation.status !== "resolved" ? (
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  {c.escalation.status === "pendiente" ? (
-                    <form action={setEscalationStatus.bind(null, slug, c.id, "en_curso")}>
+                  {c.escalation.status === "pending" ? (
+                    <form action={setEscalationStatus.bind(null, slug, c.id, "in_progress")}>
                       <button className={clsx(btn.secondary, "w-full")}>
-                        <HandGrabbingIcon className="size-4" weight="duotone" /> Tomar
+                        <HandGrabbingIcon className="size-4" weight="duotone" /> Take
                       </button>
                     </form>
                   ) : null}
-                  <form action={setEscalationStatus.bind(null, slug, c.id, "resuelta")} className={c.escalation.status === "pendiente" ? "" : "col-span-2"}>
+                  <form action={setEscalationStatus.bind(null, slug, c.id, "resolved")} className={c.escalation.status === "pending" ? "" : "col-span-2"}>
                     <button className={clsx(btn.primary, "w-full")}>
-                      <CheckCircleIcon className="size-4" weight="duotone" /> Resolver
+                      <CheckCircleIcon className="size-4" weight="duotone" /> Resolve
                     </button>
                   </form>
                 </div>
@@ -210,26 +210,26 @@ export default async function ConversationPage(props: PageProps<"/w/[slug]/c/[id
 
           <RecordCard c={c} />
 
-          <Card title="Clasificación Jev" icon={BrainIcon}>
+          <Card title="Jev classification" icon={BrainIcon}>
             {k ? (
               <div className="divide-y divide-zinc-100">
-                <JudgmentRow label="Tema" meta={topicMeta(workspace, k.topic.value)} p={k.topic.p} />
+                <JudgmentRow label="Topic" meta={topicMeta(workspace, k.topic.value)} p={k.topic.p} />
                 {fields.map((f) =>
                   k.fields[f.key] ? (
                     <JudgmentRow key={f.key} label={f.label} meta={fieldMeta(workspace, f.key, k.fields[f.key].value)} p={k.fields[f.key].p} />
                   ) : null,
                 )}
-                <JudgmentRow label="Resultado" meta={RESOLVED[k.resolved.value]} p={k.resolved.p} />
-                <JudgmentRow label="Sentimiento" meta={SENTIMENT[k.sentiment.value]} p={k.sentiment.p} />
-                <JudgmentRow label="Calidad del agente" meta={AGENT_ISSUE[k.agentIssue.value]} p={k.agentIssue.p} />
+                <JudgmentRow label="Outcome" meta={RESOLVED[k.resolved.value]} p={k.resolved.p} />
+                <JudgmentRow label="Sentiment" meta={SENTIMENT[k.sentiment.value]} p={k.sentiment.p} />
+                <JudgmentRow label="Agent quality" meta={AGENT_ISSUE[k.agentIssue.value]} p={k.agentIssue.p} />
               </div>
             ) : (
-              <p className="text-sm text-zinc-500">Se clasifica automáticamente cuando termina la conversación.</p>
+              <p className="text-sm text-zinc-500">Classified automatically when the conversation ends.</p>
             )}
           </Card>
 
           {c.decisions.length > 0 ? (
-            <Card title="Decisiones en vivo" icon={SparkleIcon}>
+            <Card title="Live decisions" icon={SparkleIcon}>
               <ol className="space-y-5">
                 {c.decisions.map((d) => (
                   <li key={d.at} className="relative border-l-2 border-indigo-100 pl-4">
@@ -238,15 +238,15 @@ export default async function ConversationPage(props: PageProps<"/w/[slug]/c/[id
                       {clock(d.at)}
                       {d.action === "escalate" ? (
                         <span className="inline-flex items-center gap-1 text-rose-600">
-                          <UserSwitchIcon className="size-3.5" weight="bold" /> escaló
+                          <UserSwitchIcon className="size-3.5" weight="bold" /> escalated
                         </span>
                       ) : null}
                     </p>
                     <div className="divide-y divide-zinc-100">
-                      <JudgmentRow label="Siguiente paso" meta={NEXT_STEP[d.nextStep.value]} p={d.nextStep.p} />
-                      <JudgmentRow label="Intención" meta={topicMeta(workspace, d.intent.value)} p={d.intent.p} />
-                      <JudgmentRow label="Urgencia" meta={URGENCY[d.urgency.value]} p={d.urgency.p} />
-                      <JudgmentRow label="Ánimo" meta={UPSET[d.upset.value]} p={d.upset.p} />
+                      <JudgmentRow label="Next step" meta={NEXT_STEP[d.nextStep.value]} p={d.nextStep.p} />
+                      <JudgmentRow label="Intent" meta={topicMeta(workspace, d.intent.value)} p={d.intent.p} />
+                      <JudgmentRow label="Urgency" meta={URGENCY[d.urgency.value]} p={d.urgency.p} />
+                      <JudgmentRow label="Mood" meta={UPSET[d.upset.value]} p={d.upset.p} />
                     </div>
                   </li>
                 ))}

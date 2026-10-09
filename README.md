@@ -1,8 +1,8 @@
 # CallSupporter AI
 
-Plataforma multi-cliente de agentes de soporte con IA. Cada cliente (workspace) tiene su propio agente de ElevenLabs, su clasificación configurable con Jev y su dashboard para el equipo de CX. Journey Japan es el primer cliente.
+Multi-tenant platform for AI support agents. Each client (workspace) gets its own ElevenLabs agent, a Jev classification it can configure, and a dashboard for its CX team. Journey Japan is the first client.
 
-## Arranque rápido (modo demo)
+## Quick start (demo mode)
 
 ```bash
 cd dashboard
@@ -10,51 +10,58 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-Sin variables de entorno arranca en **modo demo**: dos workspaces de ejemplo (Journey Japan y Tienda Kumo), sin login, datos en memoria.
+With no environment variables it runs in **demo mode**: two sample workspaces (Journey Japan and Tienda Kumo), no sign-in, in-memory data.
 
-## Producción
+## Production
 
-1. Crea un proyecto en Supabase y ejecuta [`supabase/schema.sql`](supabase/schema.sql).
-2. Copia `dashboard/.env.example` a `.env.local` y rellena las claves de Supabase, `TYPESAFE_API_KEY` y `APP_URL`.
-3. En Supabase → Auth → URL Configuration, añade `APP_URL/auth/callback` a las redirect URLs.
-4. Crea tu usuario (Auth → Users → Invite) y hazte admin:
+1. Create a Supabase project and run [`supabase/schema.sql`](supabase/schema.sql).
+2. Copy `dashboard/.env.example` to `.env.local` and fill in the Supabase keys, `TYPESAFE_API_KEY` and `APP_URL`.
+3. In Supabase → Auth → URL Configuration, add `APP_URL/auth/callback` to the redirect URLs.
+4. Create your user (Auth → Users → Invite) and make yourself an admin:
    ```sql
-   insert into platform_admins (user_id) select id from auth.users where email = 'tu@email.com';
+   insert into platform_admins (user_id) select id from auth.users where email = 'you@email.com';
    ```
-5. Entra en `/admin` y da de alta cada cliente con una plantilla.
+5. Open `/admin` and onboard each client from a template.
 
-## Conectar el agente de un cliente
+## ElevenLabs accounts
 
-En **Ajustes → Conexión** de cada workspace:
+Two models, mixable per client:
 
-1. Pega el **Agent ID** de ElevenLabs.
-2. Crea el **webhook post-llamada** en ElevenLabs con la URL y el secreto HMAC que aparecen ahí.
-3. Añade las **tools** al agente copiando su JSON (`get_order`, `check_status`, `decide_next_step`, `escalate_to_human`).
-4. Copia el **system prompt** de Ajustes → Agente.
-5. Prueba desde **Probar agente**.
+- **Your platform account** (default): every client gets its own agent inside your ElevenLabs account. Set `ELEVENLABS_API_KEY` and `ELEVENLABS_WEBHOOK_SECRET` once; one shared post-call webhook (`/api/webhooks/elevenlabs`) routes each call to its workspace by `agent_id`. You pay ElevenLabs and bill clients for usage.
+- **Client-owned account**: paste the client's API key in Settings → Connection. They pay ElevenLabs directly; their webhook uses the per-workspace URL and secret.
 
-## Arquitectura
+## Connecting a client's agent
+
+In each workspace's **Settings → Connection**:
+
+1. Paste the ElevenLabs **Agent ID**.
+2. Create the **post-call webhook** in ElevenLabs with the URL and HMAC secret shown there.
+3. Add the **tools** to the agent by copying their JSON (`get_order`, `check_status`, `decide_next_step`, `escalate_to_human`).
+4. Write the client's FAQ in **Settings → Knowledge** and press **Sync to ElevenLabs** (pushes the system prompt, greeting and knowledge to the agent).
+5. Try it from **Test agent**.
+
+## Architecture
 
 ```
-Cliente ──▶ ElevenLabs Agent (Claude Haiku 4.5)
-               │ tools (Bearer por workspace)
+Customer ──▶ ElevenLabs Agent (Claude Haiku 4.5)
+               │ tools (Bearer token per workspace)
                ▼
-        /api/agents/:ws/tools/:tool ──▶ API de pedidos del cliente
-                                    ──▶ feed de incidencias
+        /api/agents/:ws/tools/:tool ──▶ client's orders API
+                                    ──▶ incident feed
                                     ──▶ Jev (decide_next_step)
                                     ──▶ Slack (escalate_to_human)
-               │ webhook post-llamada (HMAC)
+               │ post-call webhook (HMAC)
                ▼
-        /api/webhooks/elevenlabs/:ws ──▶ Jev (clasificación) ──▶ Supabase ──▶ Dashboard
+        /api/webhooks/elevenlabs/:ws ──▶ Jev (classification) ──▶ Supabase ──▶ Dashboard
 ```
 
-Todo vive en Next.js: no hace falta n8n.
+Everything runs inside Next.js; no n8n needed.
 
-| Carpeta | Qué hay |
+| Folder | Contents |
 |---|---|
-| `dashboard/src/app/w/[slug]` | Dashboard por workspace: Inbox, Escalaciones, Métricas, Calidad, Probar agente, Ajustes |
-| `dashboard/src/app/admin` | Alta y listado de clientes |
-| `dashboard/src/app/api` | Tools del agente y webhook post-llamada |
-| `dashboard/src/lib/jev.ts` | Preguntas a Jev generadas desde la configuración del workspace |
-| `dashboard/src/lib/store` | Acceso a datos: Supabase o memoria (demo) |
-| `dashboard/src/lib/templates.ts` | Plantillas por industria |
+| `dashboard/src/app/w/[slug]` | Per-workspace dashboard: Inbox, Escalations, Metrics, Quality, Test agent, Settings |
+| `dashboard/src/app/admin` | Client onboarding and list |
+| `dashboard/src/app/api` | Agent tools and post-call webhook |
+| `dashboard/src/lib/jev.ts` | Jev questions generated from the workspace config |
+| `dashboard/src/lib/store` | Data access: Supabase or in-memory (demo) |
+| `dashboard/src/lib/templates.ts` | Industry templates |

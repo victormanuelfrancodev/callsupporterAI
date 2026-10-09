@@ -22,7 +22,7 @@ export const jevConfigured = () => Boolean(process.env.TYPESAFE_API_KEY);
 
 async function evaluate(state: unknown, questions: Record<string, ChoiceQuestion>): Promise<Record<string, ChoiceAnswer>> {
   const key = process.env.TYPESAFE_API_KEY;
-  if (!key) throw new Error("Falta TYPESAFE_API_KEY");
+  if (!key) throw new Error("Missing TYPESAFE_API_KEY");
 
   for (let attempt = 0; attempt < 3; attempt++) {
     const res = await fetch(JEV_URL, {
@@ -38,7 +38,7 @@ async function evaluate(state: unknown, questions: Record<string, ChoiceQuestion
     if (!res.ok) throw new Error(`Jev ${res.status}: ${await res.text()}`);
     return ((await res.json()) as { answers: Record<string, ChoiceAnswer> }).answers;
   }
-  throw new Error("Jev saturado, reintentos agotados");
+  throw new Error("Jev overloaded, retries exhausted");
 }
 
 const judgment = <T extends string>(a: ChoiceAnswer): Judgment<T> => ({
@@ -85,28 +85,28 @@ export async function classifyConversation(ws: Workspace, messages: Pick<Message
       type: "choice",
       instructions: "How did the support conversation in `conversation` end for the customer?",
       criteria: {
-        si: "The customer's question or problem was answered and nothing is left pending",
-        no: "The customer's problem remained unsolved or the conversation ended without an answer",
-        escalado: "The case was handed off to a human team member",
+        resolved: "The customer's question or problem was answered and nothing is left pending",
+        unresolved: "The customer's problem remained unsolved or the conversation ended without an answer",
+        escalated: "The case was handed off to a human team member",
       },
     },
     sentiment: {
       type: "choice",
       instructions: "What is the customer's overall sentiment by the end of `conversation`?",
       criteria: {
-        positivo: "Satisfied, thankful or relieved",
+        positive: "Satisfied, thankful or relieved",
         neutral: "Neither clearly happy nor upset",
-        negativo: "Frustrated, angry or disappointed",
+        negative: "Frustrated, angry or disappointed",
       },
     },
     agent_issue: {
       type: "choice",
       instructions: "Did the agent's replies in `conversation` break any of the `agent_rules` or misunderstand the customer?",
       criteria: {
-        ninguno: "The agent followed the rules and understood the customer",
-        respuesta_inventada: "The agent stated facts, prices or promises not backed by tool results or the knowledge base",
-        fuera_de_guion: "The agent went off-script, e.g. mentioned other companies or products, or discussed unrelated topics",
-        no_entendio: "The agent misunderstood the customer or repeated questions the customer had already answered",
+        none: "The agent followed the rules and understood the customer",
+        hallucination: "The agent stated facts, prices or promises not backed by tool results or the knowledge base",
+        off_script: "The agent went off-script, e.g. mentioned other companies or products, or discussed unrelated topics",
+        misunderstood: "The agent misunderstood the customer or repeated questions the customer had already answered",
       },
     },
     ...fieldQuestions,
@@ -132,24 +132,24 @@ export async function decideNextStep(
       type: "choice",
       instructions: "How urgent is the customer's situation in `conversation`?",
       criteria: {
-        baja: "A general question; nothing is blocked",
-        media: "Something is not working but there is a workaround or it can wait a few hours",
-        alta: "The customer is blocked right now or money is at stake",
+        low: "A general question; nothing is blocked",
+        medium: "Something is not working but there is a workaround or it can wait a few hours",
+        high: "The customer is blocked right now or money is at stake",
       },
     },
     upset: {
       type: "choice",
       instructions: "How upset is the customer in their latest messages in `conversation`?",
-      criteria: { no: "Calm", algo: "Somewhat frustrated", mucho: "Very angry, demanding, or threatening to complain" },
+      criteria: { calm: "Calm", somewhat: "Somewhat frustrated", very: "Very angry, demanding, or threatening to complain" },
     },
     next_step: {
       type: "choice",
       instructions: "Given the `agent_rules`, what should the support agent do next in `conversation`?",
       criteria: {
-        responder: "Answer the customer directly with known information",
-        pedir_datos: "Ask for the order number, email or other missing details first",
-        escalar: "Hand off to a human: refunds, compensation, angry customer, or anything outside the agent's knowledge",
-        cerrar: "The customer's issue is solved and the conversation can end",
+        answer: "Answer the customer directly with known information",
+        ask_details: "Ask for the order number, email or other missing details first",
+        escalate: "Hand off to a human: refunds, compensation, angry customer, or anything outside the agent's knowledge",
+        close: "The customer's issue is solved and the conversation can end",
       },
     },
   });
@@ -164,9 +164,9 @@ export async function decideNextStep(
   const { minConfidence, alwaysEscalateTopics, escalateWhenVeryUpset } = ws.config.escalation;
   const sure = (j: Judgment) => j.p >= minConfidence;
   let reason = "";
-  if (d.nextStep.value === "escalar" && sure(d.nextStep)) reason = "Jev recomienda escalar";
-  else if (alwaysEscalateTopics.includes(d.intent.value) && sure(d.intent)) reason = `Tema "${d.intent.value}" siempre se escala`;
-  else if (escalateWhenVeryUpset && d.upset.value === "mucho" && sure(d.upset)) reason = "Cliente muy molesto";
+  if (d.nextStep.value === "escalate" && sure(d.nextStep)) reason = "Jev recommends escalating";
+  else if (alwaysEscalateTopics.includes(d.intent.value) && sure(d.intent)) reason = `Topic "${d.intent.value}" is always escalated`;
+  else if (escalateWhenVeryUpset && d.upset.value === "very" && sure(d.upset)) reason = "Customer is very upset";
 
   return { decision: { ...d, at: new Date().toISOString(), action: reason ? "escalate" : "continue" }, reason };
 }

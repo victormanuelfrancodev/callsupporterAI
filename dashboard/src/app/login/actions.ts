@@ -7,7 +7,7 @@ export type LoginState = { sent?: string; error?: string };
 
 export async function sendMagicLink(_: LoginState, form: FormData): Promise<LoginState> {
   const email = String(form.get("email") ?? "").trim().toLowerCase();
-  if (!email.includes("@")) return { error: "Escribe un email válido" };
+  if (!email.includes("@")) return { error: "Enter a valid email" };
   const origin = process.env.APP_URL ?? `https://${(await headers()).get("host")}`;
   const supabase = await sessionClient();
   // Only invited users can sign in: accounts are created from /admin or Ajustes → Equipo.
@@ -15,6 +15,6 @@ export async function sendMagicLink(_: LoginState, form: FormData): Promise<Logi
     email,
     options: { shouldCreateUser: false, emailRedirectTo: `${origin}/auth/callback` },
   });
-  if (error) return { error: "No encontramos una cuenta con ese email. Pide una invitación a tu administrador." };
+  if (error) return { error: "We couldn't find an account with that email. Ask your admin for an invite." };
   return { sent: email };
 }

@@ -26,7 +26,7 @@ export function NewClientForm({ templates }: { templates: { key: string; label: 
   return (
     <form action={action} className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Nombre del cliente">
+        <FormField label="Client name">
           <input
             name="name"
             required
@@ -54,7 +54,7 @@ export function NewClientForm({ templates }: { templates: { key: string; label: 
       </div>
 
       <fieldset>
-        <legend className="mb-2 text-sm font-medium text-zinc-800">Plantilla</legend>
+        <legend className="mb-2 text-sm font-medium text-zinc-800">Template</legend>
         <div className="grid gap-3 sm:grid-cols-3">
           {templates.map((t, i) => {
             const Icon = TEMPLATE_ICONS[t.key] ?? FileDashedIcon;
@@ -72,8 +72,8 @@ export function NewClientForm({ templates }: { templates: { key: string; label: 
         </div>
       </fieldset>
 
-      <FormField label="Email del administrador del cliente" hint="Opcional. Le llegará una invitación para entrar.">
-        <input name="ownerEmail" type="email" placeholder="cx@cliente.com" className={input} />
+      <FormField label="Client admin email" hint="Optional. They'll get an invite to sign in.">
+        <input name="ownerEmail" type="email" placeholder="cx@client.com" className={input} />
       </FormField>
 
       <div className="flex items-center justify-end gap-3">
@@ -84,7 +84,7 @@ export function NewClientForm({ templates }: { templates: { key: string; label: 
         ) : null}
         <button disabled={pending} className={btn.primary}>
           {pending ? <SpinnerGapIcon className="size-4 animate-spin" /> : <PlusCircleIcon className="size-4" weight="duotone" />}
-          Crear cliente
+          Create client
         </button>
       </div>
     </form>

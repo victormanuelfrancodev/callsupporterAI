@@ -8,11 +8,11 @@ export default async function InboxPage(props: PageProps<"/w/[slug]">) {
   const { slug } = await props.params;
   const { workspace } = await requireWorkspace(slug);
   const conversations = await store.listConversations(workspace.id);
-  const open = conversations.filter((c) => c.classification?.resolved.value !== "si").length;
+  const open = conversations.filter((c) => c.classification?.resolved.value !== "resolved").length;
 
   return (
     <>
-      <PageHeader icon={TrayIcon} title="Inbox" subtitle={`${conversations.length} conversaciones · ${open} abiertas o escaladas`} />
+      <PageHeader icon={TrayIcon} title="Inbox" subtitle={`${conversations.length} conversations · ${open} open or escalated`} />
       <InboxList
         slug={slug}
         conversations={conversations}

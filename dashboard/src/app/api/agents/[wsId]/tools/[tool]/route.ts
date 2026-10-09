@@ -58,18 +58,18 @@ async function nextStep(ws: Workspace, body: Body) {
       ? `Call escalate_to_human now. Reason: ${reason}.`
       : decision.nextStep.p < ws.config.escalation.minConfidence
         ? "You're not sure yet: ask one short clarifying question."
-        : { responder: "Answer the customer.", pedir_datos: "Ask for the order number or email.", escalar: "Ask one clarifying question before escalating.", cerrar: "Confirm everything is solved and close politely." }[decision.nextStep.value];
+        : { answer: "Answer the customer.", ask_details: "Ask for the order number or email.", escalate: "Ask one clarifying question before escalating.", close: "Confirm everything is solved and close politely." }[decision.nextStep.value];
   return { action: decision.action, intent: decision.intent.value, instruction };
 }
 
 async function escalate(ws: Workspace, body: Body) {
-  const urgency = (["baja", "media", "alta"].includes(body.urgency ?? "") ? body.urgency : "media") as Urgency;
-  const reason = body.reason ?? "El cliente necesita una persona";
+  const urgency = (["low", "medium", "high"].includes(body.urgency ?? "") ? body.urgency : "medium") as Urgency;
+  const reason = body.reason ?? "The customer needs a person";
   if (body.conversation_id) {
     await store.upsertConversation(ws.id, body.conversation_id, {
-      escalation: { reason, urgency, status: "pendiente", createdAt: new Date().toISOString() },
+      escalation: { reason, urgency, status: "pending", createdAt: new Date().toISOString() },
       ...(body.customer_name || body.customer_email
-        ? { customer: { name: body.customer_name ?? "Cliente", email: body.customer_email ?? "", language: "—" } }
+        ? { customer: { name: body.customer_name ?? "Customer", email: body.customer_email ?? "", language: "—" } }
         : {}),
     });
   }
@@ -79,7 +79,7 @@ async function escalate(ws: Workspace, body: Body) {
     await fetch(hook, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: `:rotating_light: *${ws.name}* · urgencia ${urgency}\n${reason}\n${body.customer_name ?? ""} ${body.customer_email ?? ""}\n<${link}|Abrir conversación>` }),
+      body: JSON.stringify({ text: `:rotating_light: *${ws.name}* · ${urgency} urgency\n${reason}\n${body.customer_name ?? ""} ${body.customer_email ?? ""}\n<${link}|Open conversation>` }),
       signal: AbortSignal.timeout(5000),
     }).catch(() => undefined);
   }

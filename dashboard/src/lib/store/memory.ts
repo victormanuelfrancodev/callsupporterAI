@@ -12,7 +12,7 @@ const state = (): State => (g.__csStore ??= seed());
 
 function ws(id: string): Workspace {
   const w = state().workspaces.find((x) => x.id === id);
-  if (!w) throw new Error(`Workspace ${id} no existe`);
+  if (!w) throw new Error(`Workspace ${id} not found`);
   return w;
 }
 
@@ -34,9 +34,12 @@ export const memoryStore: Store = {
   async getWorkspaceById(id) {
     return state().workspaces.find((w) => w.id === id);
   },
+  async getWorkspaceByAgentId(agentId) {
+    return state().workspaces.find((w) => w.config.agent.elevenlabsAgentId === agentId);
+  },
   async createWorkspace(input) {
     const s = state();
-    if (s.workspaces.some((w) => w.slug === input.slug)) throw new Error("Ese slug ya existe");
+    if (s.workspaces.some((w) => w.slug === input.slug)) throw new Error("That slug already exists");
     const w: Workspace = {
       ...input,
       id: `ws_${randomUUID().slice(0, 8)}`,

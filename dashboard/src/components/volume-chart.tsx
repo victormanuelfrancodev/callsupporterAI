@@ -18,7 +18,7 @@ const TOTAL = "#4f46e5";
 const RESOLVED = "#0d9488";
 
 const fmtDay = (d: string) =>
-  new Date(`${d}T12:00:00`).toLocaleDateString("es", { day: "numeric", month: "short" });
+  new Date(`${d}T12:00:00`).toLocaleDateString("en", { day: "numeric", month: "short" });
 
 function Tip({ active, payload, label }: TooltipContentProps<ValueType, NameType>) {
   if (!active || !payload?.length) return null;
@@ -31,10 +31,10 @@ function Tip({ active, payload, label }: TooltipContentProps<ValueType, NameType
         <span className="ml-auto pl-4 font-semibold tabular-nums text-zinc-900">{p.total}</span>
       </p>
       <p className="flex items-center gap-2 text-zinc-600">
-        <span className="size-2 rounded-full" style={{ background: RESOLVED }} /> Sin humano
+        <span className="size-2 rounded-full" style={{ background: RESOLVED }} /> Without human
         <span className="ml-auto pl-4 font-semibold tabular-nums text-zinc-900">{p.resolved}</span>
       </p>
-      {p.incident ? <p className="mt-1.5 text-amber-700">Incidencia</p> : null}
+      {p.incident ? <p className="mt-1.5 text-amber-700">Incident</p> : null}
     </div>
   );
 }
@@ -48,11 +48,11 @@ export function VolumeChart({ data }: { data: DailyPoint[] }) {
           <span className="h-0.5 w-4 rounded-full" style={{ background: TOTAL }} /> Total
         </span>
         <span className="flex items-center gap-2">
-          <span className="h-0.5 w-4 rounded-full" style={{ background: RESOLVED }} /> Resueltas sin humano
+          <span className="h-0.5 w-4 rounded-full" style={{ background: RESOLVED }} /> Resolved without human
         </span>
         {spikes.length ? (
           <span className="flex items-center gap-2">
-            <span className="h-3 w-0 border-l-2 border-dashed border-amber-400" /> Incidencia
+            <span className="h-3 w-0 border-l-2 border-dashed border-amber-400" /> Incident
           </span>
         ) : null}
       </div>

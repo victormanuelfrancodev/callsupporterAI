@@ -4,8 +4,8 @@ import { demoMode } from "@/lib/store";
 import { LoginForm } from "./login-form";
 
 const ERRORS: Record<string, string> = {
-  enlace: "El enlace expiró o ya se usó. Pide uno nuevo.",
-  "sin-acceso": "Tu cuenta aún no tiene ningún workspace asignado.",
+  link: "That link expired or was already used. Request a new one.",
+  "no-access": "Your account isn't assigned to any workspace yet.",
 };
 
 export default async function LoginPage(props: PageProps<"/login">) {
@@ -20,7 +20,7 @@ export default async function LoginPage(props: PageProps<"/login">) {
             <HeadsetIcon className="size-6" weight="fill" />
           </span>
           <h1 className="text-xl font-semibold tracking-tight text-zinc-900">CallSupporter AI</h1>
-          <p className="text-sm text-zinc-500">Entra con el email con el que te invitaron</p>
+          <p className="text-sm text-zinc-500">Sign in with the email you were invited with</p>
         </div>
         <div className="rounded-2xl border border-zinc-200/80 bg-white p-6">
           <LoginForm initialError={typeof error === "string" ? ERRORS[error] : undefined} />

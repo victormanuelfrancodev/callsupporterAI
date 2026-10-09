@@ -13,8 +13,8 @@ export function LoginForm({ initialError }: { initialError?: string }) {
         <span className="grid size-12 place-items-center rounded-full bg-emerald-50 text-emerald-600">
           <PaperPlaneTiltIcon className="size-6" weight="duotone" />
         </span>
-        <p className="font-medium text-zinc-900">Revisa tu correo</p>
-        <p className="text-sm text-zinc-500">Enviamos un enlace de acceso a {state.sent}</p>
+        <p className="font-medium text-zinc-900">Check your email</p>
+        <p className="text-sm text-zinc-500">We sent a sign-in link to {state.sent}</p>
       </div>
     );
   }
@@ -28,7 +28,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
           type="email"
           required
           autoFocus
-          placeholder="tu@empresa.com"
+          placeholder="you@company.com"
           className="h-12 w-full rounded-xl border border-zinc-200 bg-white pl-11 pr-4 text-sm outline-none placeholder:text-zinc-400 focus:border-indigo-300 focus:ring-4 focus:ring-indigo-50"
         />
       </label>
@@ -37,7 +37,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
         disabled={pending}
         className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-60"
       >
-        {pending ? <SpinnerGapIcon className="size-5 animate-spin" /> : <>Recibir enlace de acceso <ArrowRightIcon className="size-4" weight="bold" /></>}
+        {pending ? <SpinnerGapIcon className="size-5 animate-spin" /> : <>Email me a sign-in link <ArrowRightIcon className="size-4" weight="bold" /></>}
       </button>
     </form>
   );

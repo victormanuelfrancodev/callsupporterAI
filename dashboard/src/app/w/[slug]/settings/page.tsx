@@ -7,7 +7,7 @@ import { shortDate } from "@/lib/format";
 import { TONE_CLASSES, TONES } from "@/lib/meta";
 import { saveGeneral } from "./actions";
 
-export default async function GeneralSettings(props: PageProps<"/w/[slug]/ajustes">) {
+export default async function GeneralSettings(props: PageProps<"/w/[slug]/settings">) {
   const { slug } = await props.params;
   const { workspace } = await requireWorkspace(slug);
 
@@ -15,7 +15,7 @@ export default async function GeneralSettings(props: PageProps<"/w/[slug]/ajuste
     <form action={saveGeneral.bind(null, slug)} className="max-w-2xl space-y-6">
       <Card title="Workspace" icon={SlidersHorizontalIcon}>
         <div className="space-y-5">
-          <FormField label="Nombre del cliente">
+          <FormField label="Client name">
             <input name="name" defaultValue={workspace.name} className={input} required />
           </FormField>
 
@@ -38,7 +38,7 @@ export default async function GeneralSettings(props: PageProps<"/w/[slug]/ajuste
             </span>
             <span className="flex items-center gap-2 text-zinc-500">
               <CalendarBlankIcon className="size-4" />
-              Cliente desde {shortDate(workspace.createdAt)}
+              Client since {shortDate(workspace.createdAt)}
             </span>
           </div>
         </div>

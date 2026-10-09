@@ -51,6 +51,6 @@ export async function requireWorkspace(slug: string): Promise<WorkspaceAccess> {
 
 export async function requireOwner(slug: string): Promise<WorkspaceAccess> {
   const access = await requireWorkspace(slug);
-  if (access.role !== "owner") throw new Error("Solo los administradores del workspace pueden cambiar esto");
+  if (access.role !== "owner") throw new Error("Only workspace admins can change this");
   return access;
 }

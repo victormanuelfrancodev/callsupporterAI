@@ -18,7 +18,7 @@ export default async function AdminPage() {
         w,
         members: members.length,
         conversations: conversations.length,
-        open: conversations.filter((c) => c.escalation && c.escalation.status !== "resuelta").length,
+        open: conversations.filter((c) => c.escalation && c.escalation.status !== "resolved").length,
       };
     }),
   );
@@ -36,7 +36,7 @@ export default async function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-8">
-        <PageHeader icon={BuildingsIcon} title="Clientes" subtitle={`${workspaces.length} workspaces activos`} />
+        <PageHeader icon={BuildingsIcon} title="Clients" subtitle={`${workspaces.length} active workspaces`} />
 
         <ul className="mb-10 grid gap-3 sm:grid-cols-2">
           {rows.map(({ w, members, conversations, open }) => (
@@ -48,11 +48,11 @@ export default async function AdminPage() {
                 <WorkspaceMark ws={w} size="lg" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium text-zinc-900">{w.name}</p>
-                  <p className="text-xs text-zinc-500">{w.industry} · desde {shortDate(w.createdAt)}</p>
+                  <p className="text-xs text-zinc-500">{w.industry} · since {shortDate(w.createdAt)}</p>
                   <div className="mt-2.5 flex items-center gap-4 text-xs text-zinc-500">
-                    <span className="inline-flex items-center gap-1.5" title="Conversaciones"><ChatsCircleIcon className="size-4" weight="duotone" />{conversations}</span>
-                    <span className="inline-flex items-center gap-1.5" title="Escalaciones abiertas"><SirenIcon className="size-4" weight="duotone" />{open}</span>
-                    <span className="inline-flex items-center gap-1.5" title="Miembros"><UsersThreeIcon className="size-4" weight="duotone" />{members}</span>
+                    <span className="inline-flex items-center gap-1.5" title="Conversations"><ChatsCircleIcon className="size-4" weight="duotone" />{conversations}</span>
+                    <span className="inline-flex items-center gap-1.5" title="Open escalations"><SirenIcon className="size-4" weight="duotone" />{open}</span>
+                    <span className="inline-flex items-center gap-1.5" title="Members"><UsersThreeIcon className="size-4" weight="duotone" />{members}</span>
                   </div>
                 </div>
                 <CaretRightIcon className="size-5 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500" />
@@ -61,7 +61,7 @@ export default async function AdminPage() {
           ))}
         </ul>
 
-        <Card title="Nuevo cliente" icon={PlusCircleIcon}>
+        <Card title="New client" icon={PlusCircleIcon}>
           <NewClientForm templates={Object.entries(TEMPLATES).map(([key, t]) => ({ key, label: t.label, description: t.description }))} />
         </Card>
       </main>

@@ -31,47 +31,47 @@ export interface Meta {
 }
 
 export const RESOLVED: Record<Resolved, Meta> = {
-  si: { label: "Resuelta", icon: CheckCircleIcon, tone: "good" },
-  no: { label: "Sin resolver", icon: CircleDashedIcon, tone: "warn" },
-  escalado: { label: "Escalada", icon: UserSwitchIcon, tone: "bad" },
+  resolved: { label: "Resolved", icon: CheckCircleIcon, tone: "good" },
+  unresolved: { label: "Unresolved", icon: CircleDashedIcon, tone: "warn" },
+  escalated: { label: "Escalated", icon: UserSwitchIcon, tone: "bad" },
 };
 
 export const SENTIMENT: Record<Sentiment, Meta> = {
-  positivo: { label: "Positivo", icon: ThumbsUpIcon, tone: "good" },
+  positive: { label: "Positive", icon: ThumbsUpIcon, tone: "good" },
   neutral: { label: "Neutral", icon: MinusCircleIcon, tone: "neutral" },
-  negativo: { label: "Negativo", icon: ThumbsDownIcon, tone: "bad" },
+  negative: { label: "Negative", icon: ThumbsDownIcon, tone: "bad" },
 };
 
 export const AGENT_ISSUE: Record<AgentIssue, Meta> = {
-  ninguno: { label: "Sin problemas", tone: "good" },
-  respuesta_inventada: { label: "Respuesta inventada", icon: SealWarningIcon, tone: "bad" },
-  fuera_de_guion: { label: "Fuera de guion", icon: HandPalmIcon, tone: "warn" },
-  no_entendio: { label: "No entendió", icon: QuestionIcon, tone: "warn" },
+  none: { label: "No issues", tone: "good" },
+  hallucination: { label: "Made-up answer", icon: SealWarningIcon, tone: "bad" },
+  off_script: { label: "Off script", icon: HandPalmIcon, tone: "warn" },
+  misunderstood: { label: "Misunderstood", icon: QuestionIcon, tone: "warn" },
 };
 
 export const URGENCY: Record<Urgency, Meta> = {
-  baja: { label: "Baja", tone: "neutral" },
-  media: { label: "Media", tone: "warn" },
-  alta: { label: "Alta", tone: "bad" },
+  low: { label: "Low", tone: "neutral" },
+  medium: { label: "Medium", tone: "warn" },
+  high: { label: "High", tone: "bad" },
 };
 
 export const UPSET: Record<Upset, Meta> = {
-  no: { label: "Tranquilo", tone: "good" },
-  algo: { label: "Algo molesto", tone: "warn" },
-  mucho: { label: "Muy molesto", tone: "bad" },
+  calm: { label: "Calm", tone: "good" },
+  somewhat: { label: "Somewhat upset", tone: "warn" },
+  very: { label: "Very upset", tone: "bad" },
 };
 
 export const NEXT_STEP: Record<NextStep, Meta> = {
-  responder: { label: "Responder", tone: "good" },
-  pedir_datos: { label: "Pedir datos", tone: "info" },
-  escalar: { label: "Escalar a humano", tone: "bad" },
-  cerrar: { label: "Cerrar", tone: "neutral" },
+  answer: { label: "Answer", tone: "good" },
+  ask_details: { label: "Ask for details", tone: "info" },
+  escalate: { label: "Escalate to human", tone: "bad" },
+  close: { label: "Close", tone: "neutral" },
 };
 
 export const ESCALATION_STATUS: Record<EscalationStatus, Meta> = {
-  pendiente: { label: "Pendiente", tone: "bad" },
-  en_curso: { label: "En curso", tone: "warn" },
-  resuelta: { label: "Resuelta", tone: "good" },
+  pending: { label: "Pending", tone: "bad" },
+  in_progress: { label: "In progress", tone: "warn" },
+  resolved: { label: "Resolved", tone: "good" },
 };
 
 const UNKNOWN: Meta = { label: "—", tone: "neutral" };

@@ -21,6 +21,7 @@ export interface Store {
   listWorkspacesForUser(userId: string): Promise<Workspace[]>;
   getWorkspaceBySlug(slug: string): Promise<Workspace | undefined>;
   getWorkspaceById(id: string): Promise<Workspace | undefined>;
+  getWorkspaceByAgentId(agentId: string): Promise<Workspace | undefined>;
   createWorkspace(input: NewWorkspace): Promise<Workspace>;
   updateWorkspace(id: string, patch: WorkspacePatch): Promise<Workspace>;
   rotateSecrets(id: string): Promise<Workspace>;

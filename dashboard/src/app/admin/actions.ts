@@ -20,9 +20,9 @@ export async function createClientWorkspace(_: CreateState, form: FormData): Pro
   const ownerEmail = String(form.get("ownerEmail") ?? "").trim().toLowerCase();
   const template = TEMPLATES[templateKey];
 
-  if (!name || !slug) return { error: "Pon un nombre y un slug" };
-  if (!template) return { error: "Elige una plantilla" };
-  if (await store.getWorkspaceBySlug(slug)) return { error: "Ese slug ya está en uso" };
+  if (!name || !slug) return { error: "Add a name and a slug" };
+  if (!template) return { error: "Pick a template" };
+  if (await store.getWorkspaceBySlug(slug)) return { error: "That slug is already taken" };
 
   const ws = await store.createWorkspace({
     name,
@@ -34,5 +34,5 @@ export async function createClientWorkspace(_: CreateState, form: FormData): Pro
   if (ownerEmail.includes("@")) {
     await store.inviteMember(ws.id, ownerEmail, "owner", `${await baseUrl()}/auth/callback`);
   }
-  redirect(`/w/${ws.slug}/ajustes/conexion`);
+  redirect(`/w/${ws.slug}/settings/connection`);
 }

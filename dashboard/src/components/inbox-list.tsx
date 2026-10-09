@@ -40,7 +40,7 @@ function FilterPill({ icon: Icon, label, value, options, onChange }: {
       <span className="whitespace-nowrap">{active ? options[value]?.label : label}</span>
       <CaretDownIcon className="pointer-events-none absolute right-2.5 size-4 opacity-60" />
       <select aria-label={label} value={value} onChange={(e) => onChange(e.target.value)} className="absolute inset-0 cursor-pointer opacity-0">
-        <option value="">Todos</option>
+        <option value="">All</option>
         {Object.entries(options).map(([k, m]) => (
           <option key={k} value={k}>
             {m.label}
@@ -90,13 +90,13 @@ export function InboxList({ slug, conversations, topics, fields }: {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar cliente, email o pedido"
+            placeholder="Search customer, email or order"
             className="h-9 w-full rounded-full border border-zinc-200 bg-white pl-9 pr-3 text-sm outline-none placeholder:text-zinc-400 focus:border-indigo-300 focus:ring-4 focus:ring-indigo-50"
           />
         </div>
         <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
           <SlidersHorizontalIcon className="size-4 shrink-0 text-zinc-400" />
-          <FilterPill icon={TagIcon} label="Tema" value={f.topic ?? ""} options={topicMetas} onChange={set("topic")} />
+          <FilterPill icon={TagIcon} label="Topic" value={f.topic ?? ""} options={topicMetas} onChange={set("topic")} />
           {fields.map((field) => (
             <FilterPill
               key={field.key}
@@ -107,10 +107,10 @@ export function InboxList({ slug, conversations, topics, fields }: {
               onChange={set(`field:${field.key}`)}
             />
           ))}
-          <FilterPill icon={CheckCircleIcon} label="Estado" value={f.resolved ?? ""} options={RESOLVED} onChange={set("resolved")} />
-          <FilterPill icon={ThumbsUpIcon} label="Sentimiento" value={f.sentiment ?? ""} options={SENTIMENT} onChange={set("sentiment")} />
+          <FilterPill icon={CheckCircleIcon} label="Status" value={f.resolved ?? ""} options={RESOLVED} onChange={set("resolved")} />
+          <FilterPill icon={ThumbsUpIcon} label="Sentiment" value={f.sentiment ?? ""} options={SENTIMENT} onChange={set("sentiment")} />
           {activeCount > 0 ? (
-            <button onClick={() => setF({})} title="Quitar filtros" className="grid size-9 shrink-0 place-items-center rounded-full text-zinc-500 hover:bg-zinc-100">
+            <button onClick={() => setF({})} title="Clear filters" className="grid size-9 shrink-0 place-items-center rounded-full text-zinc-500 hover:bg-zinc-100">
               <XIcon className="size-4" />
             </button>
           ) : null}
@@ -120,8 +120,8 @@ export function InboxList({ slug, conversations, topics, fields }: {
       {rows.length === 0 ? (
         <EmptyState
           icon={MagnifyingGlassMinusIcon}
-          title={conversations.length ? "Nada por aquí" : "Aún no hay conversaciones"}
-          hint={conversations.length ? "Prueba con otra búsqueda o quita algún filtro." : "Aparecerán aquí cuando el agente atienda su primera llamada o chat."}
+          title={conversations.length ? "Nothing here" : "No conversations yet"}
+          hint={conversations.length ? "Try another search or clear a filter." : "They'll show up here once the agent handles its first call or chat."}
         />
       ) : (
         <ul className="divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white">
@@ -142,12 +142,12 @@ export function InboxList({ slug, conversations, topics, fields }: {
                     <div className="flex items-center gap-2">
                       <p className="truncate font-medium text-zinc-900">{c.customer.name}</p>
                       <span className="text-[11px] font-medium text-zinc-400">{c.customer.language}</span>
-                      {c.channel === "voz" ? <MicrophoneIcon className="size-3.5 text-zinc-400" aria-label="Voz" /> : null}
+                      {c.channel === "voice" ? <MicrophoneIcon className="size-3.5 text-zinc-400" aria-label="Voice" /> : null}
                     </div>
-                    <p className="mt-0.5 truncate text-sm text-zinc-500">{c.summary || "Conversación en curso"}</p>
+                    <p className="mt-0.5 truncate text-sm text-zinc-500">{c.summary || "Conversation in progress"}</p>
                     <div className="mt-2 flex items-center gap-1.5 sm:hidden">
                       <Chip meta={topic} size="sm" />
-                      {fieldOpt && fieldOpt.value !== "desconocido" ? <Chip meta={optionMeta(fieldOpt)} size="sm" /> : null}
+                      {fieldOpt && fieldOpt.value !== "unknown" ? <Chip meta={optionMeta(fieldOpt)} size="sm" /> : null}
                     </div>
                   </div>
 
@@ -157,7 +157,7 @@ export function InboxList({ slug, conversations, topics, fields }: {
                     </div>
                     {primaryField ? (
                       <span className="hidden w-12 truncate text-xs font-semibold text-zinc-500 lg:block">
-                        {fieldOpt && fieldOpt.value !== "desconocido" ? fieldOpt.label : "—"}
+                        {fieldOpt && fieldOpt.value !== "unknown" ? fieldOpt.label : "—"}
                       </span>
                     ) : null}
                     {k ? (

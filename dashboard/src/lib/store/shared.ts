@@ -7,8 +7,8 @@ export function emptyConversation(workspaceId: string, id: string): Conversation
   return {
     id,
     workspaceId,
-    customer: { name: "Cliente", email: "", language: "—" },
-    channel: "voz",
+    customer: { name: "Customer", email: "", language: "—" },
+    channel: "voice",
     startedAt: new Date().toISOString(),
     durationSec: 0,
     summary: "",
@@ -28,7 +28,7 @@ export function bucketDaily(conversations: Pick<Conversation, "startedAt" | "cla
     const d = byDate.get(c.startedAt.slice(0, 10));
     if (!d) continue;
     d.total++;
-    if (c.classification?.resolved.value === "si") d.resolved++;
+    if (c.classification?.resolved.value === "resolved") d.resolved++;
   }
   return days;
 }

@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BookOpenTextIcon,
   BrainIcon,
   PlugsConnectedIcon,
   RobotIcon,
@@ -14,16 +15,17 @@ import {
 
 const TABS = [
   { path: "", label: "General", icon: SlidersHorizontalIcon },
-  { path: "/agente", label: "Agente", icon: RobotIcon },
-  { path: "/clasificacion", label: "Clasificación", icon: BrainIcon },
-  { path: "/escalado", label: "Escalado", icon: SirenIcon },
-  { path: "/conexion", label: "Conexión", icon: PlugsConnectedIcon },
-  { path: "/equipo", label: "Equipo", icon: UsersThreeIcon },
+  { path: "/agent", label: "Agent", icon: RobotIcon },
+  { path: "/knowledge", label: "Knowledge", icon: BookOpenTextIcon },
+  { path: "/classification", label: "Classification", icon: BrainIcon },
+  { path: "/escalation", label: "Escalation", icon: SirenIcon },
+  { path: "/connection", label: "Connection", icon: PlugsConnectedIcon },
+  { path: "/team", label: "Team", icon: UsersThreeIcon },
 ];
 
 export function SettingsTabs({ slug }: { slug: string }) {
   const pathname = usePathname();
-  const base = `/w/${slug}/ajustes`;
+  const base = `/w/${slug}/settings`;
   return (
     <nav className="-mx-4 mb-6 flex gap-1 overflow-x-auto border-b border-zinc-200 px-4 sm:mx-0 sm:px-0">
       {TABS.map(({ path, label, icon: Icon }) => {

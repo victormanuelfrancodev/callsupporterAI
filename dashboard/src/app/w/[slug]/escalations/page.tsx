@@ -8,7 +8,7 @@ import { ESCALATION_STATUS, TONE_CLASSES, URGENCY, topicMeta } from "@/lib/meta"
 import { store } from "@/lib/store";
 import type { Conversation, EscalationStatus, Workspace } from "@/lib/types";
 
-const URGENCY_RANK = { alta: 0, media: 1, baja: 2 } as const;
+const URGENCY_RANK = { high: 0, medium: 1, low: 2 } as const;
 
 function EscalationCard({ c, ws }: { c: Conversation; ws: Workspace }) {
   const e = c.escalation!;
@@ -27,18 +27,18 @@ function EscalationCard({ c, ws }: { c: Conversation; ws: Workspace }) {
         <p className="mt-1 truncate text-sm text-zinc-500">{e.reason}</p>
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500">
           <span className="inline-flex items-center gap-1.5"><TimerIcon className="size-3.5" />{timeAgo(e.createdAt)}</span>
-          <span className="inline-flex items-center gap-1.5"><UserIcon className="size-3.5" />{e.assignee ?? "Sin asignar"}</span>
+          <span className="inline-flex items-center gap-1.5"><UserIcon className="size-3.5" />{e.assignee ?? "Unassigned"}</span>
         </div>
       </div>
       <div className="hidden sm:block">
-        <Chip meta={{ ...URGENCY[e.urgency], label: `Urgencia ${URGENCY[e.urgency].label.toLowerCase()}` }} />
+        <Chip meta={{ ...URGENCY[e.urgency], label: `${URGENCY[e.urgency].label} urgency` }} />
       </div>
       <CaretRightIcon className="size-5 shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500" />
     </Link>
   );
 }
 
-export default async function EscalationsPage(props: PageProps<"/w/[slug]/escalaciones">) {
+export default async function EscalationsPage(props: PageProps<"/w/[slug]/escalations">) {
   const { slug } = await props.params;
   const { workspace } = await requireWorkspace(slug);
   const all = (await store.listConversations(workspace.id)).filter((c) => c.escalation);
@@ -50,15 +50,15 @@ export default async function EscalationsPage(props: PageProps<"/w/[slug]/escala
           URGENCY_RANK[a.escalation!.urgency] - URGENCY_RANK[b.escalation!.urgency] ||
           a.escalation!.createdAt.localeCompare(b.escalation!.createdAt),
       );
-  const groups = (["pendiente", "en_curso"] as const).map((s) => ({ s, items: by(s) }));
+  const groups = (["pending", "in_progress"] as const).map((s) => ({ s, items: by(s) }));
   const openCount = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <>
-      <PageHeader icon={SirenIcon} title="Escalaciones" subtitle={`${openCount} esperando a una persona del equipo`} />
+      <PageHeader icon={SirenIcon} title="Escalations" subtitle={`${openCount} waiting for a team member`} />
 
       {openCount === 0 ? (
-        <EmptyState icon={ConfettiIcon} title="Cola vacía" hint="El agente está resolviendo todo por su cuenta." />
+        <EmptyState icon={ConfettiIcon} title="Queue is empty" hint="The agent is handling everything on its own." />
       ) : (
         <div className="space-y-8">
           {groups

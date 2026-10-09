@@ -1,4 +1,4 @@
-const rtf = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
+const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 export function timeAgo(iso: string, now = Date.now()): string {
   const diffMin = Math.round((new Date(iso).getTime() - now) / 60000);
@@ -9,11 +9,11 @@ export function timeAgo(iso: string, now = Date.now()): string {
 }
 
 export function clock(iso: string): string {
-  return new Date(iso).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" });
 }
 
 export function shortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("es", { day: "numeric", month: "short" });
+  return new Date(iso).toLocaleDateString("en", { day: "numeric", month: "short" });
 }
 
 export function jstRange(startIso: string, endIso: string): string {
@@ -24,7 +24,7 @@ export function jstRange(startIso: string, endIso: string): string {
     hour: "2-digit",
     minute: "2-digit",
   };
-  const f = new Intl.DateTimeFormat("es", opts);
+  const f = new Intl.DateTimeFormat("en", opts);
   return `${f.format(new Date(startIso))} → ${f.format(new Date(endIso))} JST`;
 }
 

@@ -36,7 +36,7 @@ function Kpi({ icon: Icon, label, value, hint, tone }: { icon: PhIcon; label: st
   );
 }
 
-export default async function MetricsPage(props: PageProps<"/w/[slug]/metricas">) {
+export default async function MetricsPage(props: PageProps<"/w/[slug]/metrics">) {
   const { slug } = await props.params;
   const { workspace } = await requireWorkspace(slug);
   const [all, daily] = await Promise.all([store.listConversations(workspace.id), store.dailyVolume(workspace.id)]);
@@ -44,9 +44,9 @@ export default async function MetricsPage(props: PageProps<"/w/[slug]/metricas">
   const n = classified.length || 1;
   const count = (fn: (c: (typeof classified)[number]) => boolean) => classified.filter(fn).length;
 
-  const resolvedByAgent = count((c) => c.classification!.resolved.value === "si");
-  const escalated = count((c) => c.classification!.resolved.value === "escalado");
-  const negative = count((c) => c.classification!.sentiment.value === "negativo");
+  const resolvedByAgent = count((c) => c.classification!.resolved.value === "resolved");
+  const escalated = count((c) => c.classification!.resolved.value === "escalated");
+  const negative = count((c) => c.classification!.sentiment.value === "negative");
   const total14 = daily.reduce((s, d) => s + d.total, 0);
   const peak = daily.reduce((a, b) => (b.total > a.total ? b : a), daily[0]);
 
@@ -66,23 +66,23 @@ export default async function MetricsPage(props: PageProps<"/w/[slug]/metricas">
 
   return (
     <>
-      <PageHeader icon={ChartBarIcon} title="Métricas" subtitle="Cómo está rindiendo el agente" />
+      <PageHeader icon={ChartBarIcon} title="Metrics" subtitle="How the agent is performing" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi icon={RobotIcon} label="Resueltas sin humano" value={pct(resolvedByAgent / n)} hint={`${resolvedByAgent} de ${classified.length} conversaciones`} tone="good" />
-        <Kpi icon={ChatsCircleIcon} label="Conversaciones" value={total14.toLocaleString("es")} hint="Últimos 14 días" tone="brand" />
-        <Kpi icon={SirenIcon} label="Escaladas" value={pct(escalated / n)} hint={`${escalated} pasaron a una persona`} tone="bad" />
-        <Kpi icon={ThumbsDownIcon} label="Sentimiento negativo" value={pct(negative / n)} hint={`${negative} clientes molestos`} tone="warn" />
+        <Kpi icon={RobotIcon} label="Resolved without a human" value={pct(resolvedByAgent / n)} hint={`${resolvedByAgent} of ${classified.length} conversations`} tone="good" />
+        <Kpi icon={ChatsCircleIcon} label="Conversations" value={total14.toLocaleString("en")} hint="Last 14 days" tone="brand" />
+        <Kpi icon={SirenIcon} label="Escalated" value={pct(escalated / n)} hint={`${escalated} handed to a person`} tone="bad" />
+        <Kpi icon={ThumbsDownIcon} label="Negative sentiment" value={pct(negative / n)} hint={`${negative} upset customers`} tone="warn" />
       </div>
 
       <Card
-        title="Volumen diario"
+        title="Daily volume"
         icon={ChartLineUpIcon}
         className="mt-6"
         action={
           peak?.incident ? (
             <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">
-              Pico de {peak.total} durante {workspace.config.integrations.statusFeedLabel.toLowerCase()}
+              Peak of {peak.total} during {workspace.config.integrations.statusFeedLabel.toLowerCase()}
             </span>
           ) : null
         }
@@ -91,9 +91,9 @@ export default async function MetricsPage(props: PageProps<"/w/[slug]/metricas">
       </Card>
 
       <div className={clsx("mt-6 grid gap-6", split && "lg:grid-cols-[minmax(0,1fr)_320px]")}>
-        <Card title="Temas más frecuentes" icon={TagIcon}>
+        <Card title="Top topics" icon={TagIcon}>
           {topics.length === 0 ? (
-            <p className="text-sm text-zinc-500">Sin datos todavía.</p>
+            <p className="text-sm text-zinc-500">No data yet.</p>
           ) : (
             <ul className="space-y-4">
               {topics.map(({ t, n: v }) => {
@@ -116,7 +116,7 @@ export default async function MetricsPage(props: PageProps<"/w/[slug]/metricas">
         </Card>
 
         {field && split ? (
-          <Card title={`Por ${field.label.toLowerCase()}`} icon={iconFor(field.icon) ?? TagIcon}>
+          <Card title={`By ${field.label.toLowerCase()}`} icon={iconFor(field.icon) ?? TagIcon}>
             <div className="flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-zinc-100">
               {split.map(({ o, color, n: v }) => (v ? <span key={o.value} title={`${o.label}: ${v}`} className={color} style={{ width: `${(v / n) * 100}%` }} /> : null))}
             </div>

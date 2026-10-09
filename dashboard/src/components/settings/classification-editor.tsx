@@ -30,7 +30,7 @@ function IconPicker({ value, tone, onChange }: { value?: string; tone: Tone; onC
     <div ref={ref} className="relative">
       <button
         type="button"
-        title="Elegir icono"
+        title="Choose icon"
         onClick={() => setOpen(!open)}
         className={clsx("grid size-10 place-items-center rounded-xl transition-colors", TONE_CLASSES[tone].chip)}
       >
@@ -100,15 +100,15 @@ function OptionRow({ option, withIcon, onChange, onRemove }: {
       ) : (
         <span className={clsx("mx-3 size-2.5 rounded-full", TONE_CLASSES[option.tone].dot)} />
       )}
-      <input value={option.label} onChange={(e) => onChange({ ...option, label: e.target.value })} placeholder="Nombre" className={input} />
+      <input value={option.label} onChange={(e) => onChange({ ...option, label: e.target.value })} placeholder="Name" className={input} />
       <input
         value={option.description ?? ""}
         onChange={(e) => onChange({ ...option, description: e.target.value })}
-        placeholder="Cuándo aplica (lo lee Jev)"
+        placeholder="When it applies (Jev reads this)"
         className={clsx(input, "col-span-4 row-start-2 sm:col-span-1 sm:row-start-auto")}
       />
       <TonePicker value={option.tone} onChange={(tone) => onChange({ ...option, tone })} />
-      <button type="button" title="Eliminar" onClick={onRemove} className={btn.icon}>
+      <button type="button" title="Delete" onClick={onRemove} className={btn.icon}>
         <TrashIcon className="size-[18px]" />
       </button>
     </div>
@@ -131,13 +131,13 @@ export function ClassificationEditor({ initial, save }: {
     <form
       action={async () => {
         setError("");
-        const res = await save(JSON.stringify({ topics, fields })).catch(() => ({ error: "No se pudo guardar" }));
+        const res = await save(JSON.stringify({ topics, fields })).catch(() => ({ error: "Couldn't save" }));
         if (res.error) setError(res.error);
       }}
       className="space-y-6"
     >
-      <Card title="Temas" icon={BrainIcon} action={<span className="text-xs text-zinc-400">{topics.length} temas</span>}>
-        <p className="mb-3 text-sm text-zinc-500">Jev clasifica cada conversación en uno de estos temas. Incluye uno tipo «Otro».</p>
+      <Card title="Topics" icon={BrainIcon} action={<span className="text-xs text-zinc-400">{topics.length} topics</span>}>
+        <p className="mb-3 text-sm text-zinc-500">Jev sorts every conversation into one of these topics. Include an “Other” one.</p>
         <div className="divide-y divide-zinc-100">
           {topics.map((t, i) => (
             <OptionRow
@@ -150,7 +150,7 @@ export function ClassificationEditor({ initial, save }: {
           ))}
         </div>
         <button type="button" onClick={() => setTopics([...topics, newOption()])} className={clsx(btn.secondary, "mt-3")}>
-          <PlusIcon className="size-4" weight="bold" /> Añadir tema
+          <PlusIcon className="size-4" weight="bold" /> Add topic
         </button>
       </Card>
 
@@ -161,10 +161,10 @@ export function ClassificationEditor({ initial, save }: {
             <input
               value={f.label}
               onChange={(e) => setField(i, { ...f, label: e.target.value })}
-              placeholder="Nombre del campo, p. ej. Carrier"
+              placeholder="Field name, e.g. Carrier"
               className={clsx(input, "font-medium")}
             />
-            <button type="button" title="Eliminar campo" onClick={() => setFields(fields.filter((_, j) => j !== i))} className={btn.icon}>
+            <button type="button" title="Delete field" onClick={() => setFields(fields.filter((_, j) => j !== i))} className={btn.icon}>
               <TrashIcon className="size-[18px]" />
             </button>
           </div>
@@ -180,7 +180,7 @@ export function ClassificationEditor({ initial, save }: {
             ))}
           </div>
           <button type="button" onClick={() => setField(i, { ...f, options: [...f.options, newOption()] })} className={clsx(btn.secondary, "mt-3")}>
-            <PlusIcon className="size-4" weight="bold" /> Añadir opción
+            <PlusIcon className="size-4" weight="bold" /> Add option
           </button>
         </Card>
       ))}
@@ -191,7 +191,7 @@ export function ClassificationEditor({ initial, save }: {
           onClick={() => setFields([...fields, { key: "", label: "", options: [newOption(), newOption()] }])}
           className={btn.secondary}
         >
-          <ListPlusIcon className="size-4" weight="duotone" /> Añadir campo personalizado
+          <ListPlusIcon className="size-4" weight="duotone" /> Add custom field
         </button>
         <div className="flex items-center gap-3">
           {error ? (

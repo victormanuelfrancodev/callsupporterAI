@@ -7,37 +7,42 @@ const baseEscalation: WorkspaceConfig["escalation"] = {
   minConfidence: 0.75,
   alwaysEscalateTopics: [],
   escalateWhenVeryUpset: true,
-  responseTime: "unos 30 minutos",
+  responseTime: "about 30 minutes",
 };
 
 const baseIntegrations: WorkspaceConfig["integrations"] = {
   orderLookupUrl: "",
   orderLookupToken: "",
   statusFeedUrl: "",
-  statusFeedLabel: "Incidencia del proveedor",
+  statusFeedLabel: "Provider incident",
 };
+
+const baseAgent = (name: string, businessContext: string): WorkspaceConfig["agent"] => ({
+  elevenlabsAgentId: "",
+  businessContext,
+  languages: "English by default; reply in the customer's language",
+  greeting: `Hi! I'm the ${name} assistant. How can I help?`,
+  extraRules: "",
+});
 
 export const TEMPLATES: Record<TemplateKey, { label: string; description: string; industry: string; build: (name: string) => WorkspaceConfig }> = {
   esim: {
     label: "eSIM / Telecom",
-    description: "Activación, validez, conexión y carriers",
+    description: "Activation, validity, connectivity and carriers",
     industry: "eSIM",
     build: (name) => ({
       agent: {
-        elevenlabsAgentId: "",
-        businessContext: `${name} vende eSIM de datos para turistas en Japón. Trabaja con los carriers IIJ y KDDI.`,
-        languages: "Inglés por defecto; responde en el idioma del cliente",
+        ...baseAgent(name, `${name} sells data eSIMs for travellers in Japan, on the IIJ and KDDI carriers.`),
         greeting: `Hi! I'm the ${name} eSIM assistant. How can I help?`,
-        extraRules: "",
       },
       classification: {
         topics: [
-          { value: "activacion", label: "Activación", icon: "lightning", tone: "brand", description: "Instalar o activar la eSIM, QR, pasos en iPhone/Android" },
-          { value: "validez", label: "Validez", icon: "calendar", tone: "info", description: "Cuándo empieza o termina el plan, días restantes" },
-          { value: "sin_conexion", label: "Sin conexión", icon: "wifi-off", tone: "warn", description: "No hay datos, no conecta, APN, roaming" },
-          { value: "reembolso", label: "Reembolso", icon: "receipt", tone: "bad", description: "Devolver dinero, cancelar compra" },
-          { value: "cambio_plan", label: "Cambio de plan", icon: "swap", tone: "neutral", description: "Ampliar datos, cambiar o extender el plan" },
-          { value: "otro", label: "Otro", icon: "question", tone: "neutral", description: "Cualquier otra consulta" },
+          { value: "activation", label: "Activation", icon: "lightning", tone: "brand", description: "Installing or activating the eSIM, QR code, iPhone/Android steps" },
+          { value: "validity", label: "Validity", icon: "calendar", tone: "info", description: "When the plan starts or ends, days left" },
+          { value: "no_connection", label: "No connection", icon: "wifi-off", tone: "warn", description: "No data, can't connect, APN, roaming" },
+          { value: "refund", label: "Refund", icon: "receipt", tone: "bad", description: "Getting money back, cancelling a purchase" },
+          { value: "plan_change", label: "Plan change", icon: "swap", tone: "neutral", description: "More data, switching or extending the plan" },
+          { value: "other", label: "Other", icon: "question", tone: "neutral", description: "Anything else" },
         ],
         fields: [
           {
@@ -45,62 +50,50 @@ export const TEMPLATES: Record<TemplateKey, { label: string; description: string
             label: "Carrier",
             icon: "broadcast",
             options: [
-              { value: "IIJ", label: "IIJ", tone: "info", description: "El cliente usa una eSIM de IIJ (red Docomo)" },
-              { value: "KDDI", label: "KDDI", tone: "brand", description: "El cliente usa una eSIM de KDDI (red au)" },
-              { value: "desconocido", label: "Desconocido", tone: "neutral", description: "No se sabe el carrier" },
+              { value: "IIJ", label: "IIJ", tone: "info", description: "The customer has an IIJ eSIM (Docomo network)" },
+              { value: "KDDI", label: "KDDI", tone: "brand", description: "The customer has a KDDI eSIM (au network)" },
+              { value: "unknown", label: "Unknown", tone: "neutral", description: "The carrier is not known" },
             ],
           },
         ],
       },
-      escalation: { ...baseEscalation, alwaysEscalateTopics: ["reembolso"] },
-      integrations: { ...baseIntegrations, statusFeedLabel: "Mantención IIJ" },
+      escalation: { ...baseEscalation, alwaysEscalateTopics: ["refund"] },
+      integrations: { ...baseIntegrations, statusFeedLabel: "IIJ maintenance" },
     }),
   },
   ecommerce: {
     label: "E-commerce",
-    description: "Envíos, devoluciones, pagos y productos",
+    description: "Shipping, returns, payments and products",
     industry: "E-commerce",
     build: (name) => ({
-      agent: {
-        elevenlabsAgentId: "",
-        businessContext: `${name} es una tienda online.`,
-        languages: "Español; responde en el idioma del cliente",
-        greeting: `¡Hola! Soy el asistente de ${name}. ¿En qué te ayudo?`,
-        extraRules: "",
-      },
+      agent: baseAgent(name, `${name} is an online store.`),
       classification: {
         topics: [
-          { value: "envio", label: "Envío", icon: "truck", tone: "info", description: "Dónde está mi pedido, retrasos, seguimiento" },
-          { value: "devolucion", label: "Devolución", icon: "package", tone: "bad", description: "Devolver un producto, cambio, reembolso" },
-          { value: "pago", label: "Pago", icon: "card", tone: "warn", description: "Cobros, tarjeta rechazada, facturas" },
-          { value: "producto", label: "Producto", icon: "cart", tone: "brand", description: "Tallas, stock, características" },
-          { value: "cuenta", label: "Cuenta", icon: "user", tone: "neutral", description: "Acceso, contraseña, datos personales" },
-          { value: "otro", label: "Otro", icon: "question", tone: "neutral", description: "Cualquier otra consulta" },
+          { value: "shipping", label: "Shipping", icon: "truck", tone: "info", description: "Where is my order, delays, tracking" },
+          { value: "return", label: "Return", icon: "package", tone: "bad", description: "Returning a product, exchanges, refunds" },
+          { value: "payment", label: "Payment", icon: "card", tone: "warn", description: "Charges, declined cards, invoices" },
+          { value: "product", label: "Product", icon: "cart", tone: "brand", description: "Sizes, stock, features" },
+          { value: "account", label: "Account", icon: "user", tone: "neutral", description: "Login, password, personal details" },
+          { value: "other", label: "Other", icon: "question", tone: "neutral", description: "Anything else" },
         ],
         fields: [],
       },
-      escalation: { ...baseEscalation, alwaysEscalateTopics: ["devolucion"] },
+      escalation: { ...baseEscalation, alwaysEscalateTopics: ["return"] },
       integrations: baseIntegrations,
     }),
   },
   blank: {
-    label: "En blanco",
-    description: "Temas genéricos para empezar",
+    label: "Blank",
+    description: "Generic topics to start with",
     industry: "General",
     build: (name) => ({
-      agent: {
-        elevenlabsAgentId: "",
-        businessContext: `${name}.`,
-        languages: "Español; responde en el idioma del cliente",
-        greeting: `¡Hola! Soy el asistente de ${name}. ¿En qué te ayudo?`,
-        extraRules: "",
-      },
+      agent: baseAgent(name, `${name}.`),
       classification: {
         topics: [
-          { value: "consulta", label: "Consulta", icon: "chat", tone: "brand", description: "Preguntas generales sobre el servicio" },
-          { value: "problema", label: "Problema", icon: "wrench", tone: "warn", description: "Algo no funciona" },
-          { value: "facturacion", label: "Facturación", icon: "receipt", tone: "bad", description: "Cobros, facturas, reembolsos" },
-          { value: "otro", label: "Otro", icon: "question", tone: "neutral", description: "Cualquier otra consulta" },
+          { value: "question", label: "Question", icon: "chat", tone: "brand", description: "General questions about the service" },
+          { value: "problem", label: "Problem", icon: "wrench", tone: "warn", description: "Something isn't working" },
+          { value: "billing", label: "Billing", icon: "receipt", tone: "bad", description: "Charges, invoices, refunds" },
+          { value: "other", label: "Other", icon: "question", tone: "neutral", description: "Anything else" },
         ],
         fields: [],
       },

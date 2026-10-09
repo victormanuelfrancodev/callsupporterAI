@@ -1,11 +1,11 @@
 // ── Fixed vocabularies (same for every workspace) ────────────────────────────
-export type Resolved = "si" | "no" | "escalado";
-export type Sentiment = "positivo" | "neutral" | "negativo";
-export type AgentIssue = "ninguno" | "respuesta_inventada" | "fuera_de_guion" | "no_entendio";
-export type Urgency = "baja" | "media" | "alta";
-export type Upset = "no" | "algo" | "mucho";
-export type NextStep = "responder" | "pedir_datos" | "escalar" | "cerrar";
-export type EscalationStatus = "pendiente" | "en_curso" | "resuelta";
+export type Resolved = "resolved" | "unresolved" | "escalated";
+export type Sentiment = "positive" | "neutral" | "negative";
+export type AgentIssue = "none" | "hallucination" | "off_script" | "misunderstood";
+export type Urgency = "low" | "medium" | "high";
+export type Upset = "calm" | "somewhat" | "very";
+export type NextStep = "answer" | "ask_details" | "escalate" | "close";
+export type EscalationStatus = "pending" | "in_progress" | "resolved";
 export type Tone = "neutral" | "brand" | "good" | "warn" | "bad" | "info";
 export type Role = "owner" | "member";
 
@@ -36,6 +36,9 @@ export interface CustomField {
 export interface WorkspaceConfig {
   agent: {
     elevenlabsAgentId: string;
+    /** Client-owned ElevenLabs account key. Empty → platform key (ELEVENLABS_API_KEY). */
+    elevenlabsApiKey?: string;
+    lastSync?: { at: string; error?: string };
     /** Business description the agent and Jev get as context. */
     businessContext: string;
     languages: string;
@@ -62,6 +65,14 @@ export interface WorkspaceConfig {
     statusFeedUrl: string;
     statusFeedLabel: string;
   };
+  /** FAQ the agent answers from; inlined into the system prompt. */
+  knowledge?: { items: KnowledgeItem[] };
+}
+
+export interface KnowledgeItem {
+  id: string;
+  question: string;
+  answer: string;
 }
 
 export interface Workspace {
@@ -131,7 +142,7 @@ export interface Conversation {
   id: string;
   workspaceId: string;
   customer: { name: string; email: string; language: string };
-  channel: "chat" | "voz";
+  channel: "chat" | "voice";
   startedAt: string;
   durationSec: number;
   summary: string;

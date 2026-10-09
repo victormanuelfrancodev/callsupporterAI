@@ -113,7 +113,7 @@ export function EmptyState({ icon: Icon, title, hint }: { icon: PhIcon; title: s
   );
 }
 
-export const PENDING: Meta = { label: "Sin clasificar", tone: "neutral" };
+export const PENDING: Meta = { label: "Unclassified", tone: "neutral" };
 
 export const btn = {
   primary:

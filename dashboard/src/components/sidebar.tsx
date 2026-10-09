@@ -31,14 +31,14 @@ type Badges = { escalations: number; review: number };
 
 const NAV = [
   { path: "", label: "Inbox", icon: TrayIcon, badge: null },
-  { path: "/escalaciones", label: "Escalaciones", icon: SirenIcon, badge: "escalations" },
-  { path: "/metricas", label: "Métricas", icon: ChartBarIcon, badge: null },
-  { path: "/calidad", label: "Calidad", icon: ShieldCheckIcon, badge: "review" },
+  { path: "/escalations", label: "Escalations", icon: SirenIcon, badge: "escalations" },
+  { path: "/metrics", label: "Metrics", icon: ChartBarIcon, badge: null },
+  { path: "/quality", label: "Quality", icon: ShieldCheckIcon, badge: "review" },
 ] as const;
 
 const SECONDARY = [
-  { path: "/probar", label: "Probar agente", icon: PhoneCallIcon, badge: null },
-  { path: "/ajustes", label: "Ajustes", icon: GearSixIcon, badge: null },
+  { path: "/test", label: "Test agent", icon: PhoneCallIcon, badge: null },
+  { path: "/settings", label: "Settings", icon: GearSixIcon, badge: null },
 ] as const;
 
 export function WorkspaceMark({ ws, size = "md" }: { ws: Pick<WorkspaceLink, "name" | "color">; size?: "sm" | "md" | "lg" }) {
@@ -105,7 +105,7 @@ function Switcher({ current, workspaces, isAdmin }: { current: WorkspaceLink; wo
                 <span className="grid size-6 place-items-center">
                   <BuildingsIcon className="size-[18px]" weight="duotone" />
                 </span>
-                Administrar clientes
+                Manage clients
               </Link>
             </>
           ) : null}
@@ -171,7 +171,7 @@ export function Sidebar({ current, workspaces, isAdmin, badges, email, demo, sig
         <div className="mt-auto space-y-3">
           {demo ? (
             <p className="rounded-xl bg-amber-50 px-3 py-2.5 text-xs text-amber-900">
-              Modo demo: los cambios viven en memoria hasta reiniciar el servidor.
+              Demo mode: changes live in memory until the server restarts.
             </p>
           ) : null}
           <div className="flex items-center gap-2 px-2">
@@ -179,7 +179,7 @@ export function Sidebar({ current, workspaces, isAdmin, badges, email, demo, sig
             <span className="min-w-0 flex-1 truncate text-xs text-zinc-500">{email}</span>
             {!demo ? (
               <form action={signOut}>
-                <button title="Cerrar sesión" className="grid size-8 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700">
+                <button title="Sign out" className="grid size-8 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700">
                   <SignOutIcon className="size-4" />
                 </button>
               </form>

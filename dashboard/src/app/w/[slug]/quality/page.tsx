@@ -7,20 +7,20 @@ import { AGENT_ISSUE, TONE_CLASSES, topicMeta } from "@/lib/meta";
 import { store } from "@/lib/store";
 import type { AgentIssue, Classification, Conversation } from "@/lib/types";
 
-export default async function QualityPage(props: PageProps<"/w/[slug]/calidad">) {
+export default async function QualityPage(props: PageProps<"/w/[slug]/quality">) {
   const { slug } = await props.params;
   const { workspace } = await requireWorkspace(slug);
   const flagged = (await store.listConversations(workspace.id))
-    .filter((c): c is Conversation & { classification: Classification } => Boolean(c.classification && c.classification.agentIssue.value !== "ninguno"))
+    .filter((c): c is Conversation & { classification: Classification } => Boolean(c.classification && c.classification.agentIssue.value !== "none"))
     .sort((a, b) => b.classification.agentIssue.p - a.classification.agentIssue.p);
 
   const counts = (Object.keys(AGENT_ISSUE) as AgentIssue[])
-    .filter((k) => k !== "ninguno")
+    .filter((k) => k !== "none")
     .map((k) => ({ k, n: flagged.filter((c) => c.classification.agentIssue.value === k).length }));
 
   return (
     <>
-      <PageHeader icon={ShieldCheckIcon} title="Revisión de calidad" subtitle="Conversaciones donde Jev detectó un problema del agente" />
+      <PageHeader icon={ShieldCheckIcon} title="Quality review" subtitle="Conversations where Jev flagged an agent issue" />
 
       <div className="mb-6 grid grid-cols-3 gap-3">
         {counts.map(({ k, n }) => {
@@ -41,7 +41,7 @@ export default async function QualityPage(props: PageProps<"/w/[slug]/calidad">)
       </div>
 
       {flagged.length === 0 ? (
-        <EmptyState icon={ShieldCheckIcon} title="Todo en orden" hint="Ninguna conversación marcada para revisión." />
+        <EmptyState icon={ShieldCheckIcon} title="All good" hint="No conversations flagged for review." />
       ) : (
         <ul className="divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white">
           {flagged.map((c) => {

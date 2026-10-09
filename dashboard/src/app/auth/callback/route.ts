@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   if (code) {
     const supabase = await sessionClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (error) redirect("/login?error=enlace");
+    if (error) redirect("/login?error=link");
   }
   redirect("/");
 }
